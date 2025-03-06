@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Álvaro Escartí | Desarrollador Fullstack</title>
+    <!-- Google Fonts - Space Grotesk -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Añadimos variantes adicionales de Grotesk -->
+    <link href="https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --text-color: #f0f0f0;
+            --accent-color: #FFD700; /* Amarillo dorado */
+            --secondary-color: #141414;
+            --highlight-color: #1e1e1e;
+            --border-color: #2a2a2a;
+            --star-color: #FFF5BD;
+            --star-shine: #FFEA00;
+            --primary-font: 'Space Grotesk', sans-serif;
+            --secondary-font: 'Darker Grotesque', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--primary-font);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+            padding: 0 1rem;
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        /* Contenedor del cielo estrellado */
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -2;
+            overflow: hidden;
+        }
+        
+        /* Estrellas */
+        .star {
+            position: absolute;
+            background-color: var(--star-color);
+            border-radius: 50%;
+            opacity: 0.7;
+        }
+        
+        .star.shine {
+            animation: twinkle 4s infinite ease-in-out;
+        }
+        
+        .star.shine-fast {
+            animation: twinkle 2s infinite ease-in-out;
+        }
+        
+        .star.shooting {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: linear-gradient(to right, rgba(255,255,255,0), var(--star-shine) 50%, rgba(255,255,255,0));
+            animation: shooting 5s linear infinite;
+            opacity: 0;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.3); }
+        }
+        
+        @keyframes shooting {
+            0% { transform: translateX(0) translateY(0) rotate(45deg); opacity: 0; }
+            10% { opacity: 1; }
+            20% { transform: translateX(calc(var(--travel-distance) * 0.2)) translateY(calc(var(--travel-distance) * 0.2)) rotate(45deg); opacity: 1; }
+            100% { transform: translateX(var(--travel-distance)) translateY(var(--travel-distance)) rotate(45deg); opacity: 0; }
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        /* Header section */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start; /* Cambio a flex-start para mejor alineación */
+            margin-bottom: 2rem;
+            padding-top: 3rem;
+        }
+
+        .header-text {
+            flex: 3;
+        }
+
+        .header-image {
+            flex: 1;
+            text-align: right;
+        }
+
+        .header-image img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+            white-space: nowrap; /* Evita saltos de línea */
+            font-family: var(--primary-font);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+        }
+
+        h1 .first-name {
+            font-weight: 500;
+        }
+
+        h1 .last-name {
+            background: linear-gradient(90deg, #FFD700, #FFA500, #ff0080, #FFD700);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: aurora 10s ease infinite;
+            font-weight: 700;
+            font-family: var(--primary-font);
+            letter-spacing: -0.02em;
+        }
+
+        .header-description {
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin-bottom: 1rem;
+            font-family: var(--primary-font);
+            font-weight: 400;
+        }
+
+        .emoji-wave {
+            display: inline-block;
+            animation: wave 1.5s infinite;
+            transform-origin: 70% 70%;
+            font-size: 1.2rem;
+        }
+
+        /* About section */
+        .section-title {
+            font-size: 1.7rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            margin-top: 2.5rem;
+            font-family: var(--primary-font);
+            letter-spacing: -0.02em;
+        }
+
+        .about-text {
+            font-size: 1rem;
+            color: #a0a0a0;
+            margin-bottom: 1rem;
+            font-family: var(--primary-font);
+            font-weight: 400;
+            line-height: 1.7;
+        }
+
+        .highlight {
+            color: var(--text-color);
+            font-weight: 500;
+            font-family: var(--primary-font);
+        }
+
+        /* Work Experience */
+        .experience-item {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            padding: 1rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .experience-item:hover {
+            background-color: var(--highlight-color);
+        }
+
+        .experience-logo {
+            width: 50px;
+            height: 50px;
+            margin-right: 1.5rem;
+            border-radius: 8px;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .experience-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .experience-details {
+            flex: 1;
+        }
+
+        .experience-title, .education-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            font-family: var(--primary-font);
+        }
+
+        .experience-role, .education-role {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+            font-family: var(--primary-font);
+            font-weight: 400;
+        }
+
+        .experience-date, .education-date {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+            text-align: right;
+            font-family: var(--primary-font);
+            font-weight: 300;
+        }
+
+        /* Education */
+        .education-item {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            padding: 1rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .education-item:hover {
+            background-color: var(--highlight-color);
+        }
+
+        .education-logo {
+            width: 50px;
+            height: 50px;
+            margin-right: 1.5rem;
+            border-radius: 8px;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .education-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .education-details {
+            flex: 1;
+        }
+
+        .education-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .education-role {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+        }
+
+        .education-date {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+            text-align: right;
+        }
+
+        /* Skills */
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .skill-tag {
+            background-color: var(--highlight-color);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            font-family: var(--primary-font);
+            font-weight: 500;
+            letter-spacing: 0.01em;
+        }
+
+        .skill-tag:hover {
+            background-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            color: #000;
+        }
+
+        /* Social links */
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            color: var(--text-color);
+            font-size: 1.2rem;
+            transition: color 0.2s ease;
+        }
+
+        .social-link:hover {
+            color: var(--accent-color);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-bottom: 2rem;
+            font-size: 0.9rem;
+            color: #a0a0a0;
+            font-family: var(--primary-font);
+            font-weight: 300;
+        }
+
+        /* Code element animations */
+        .code-element {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.06);
+            font-family: monospace;
+            font-size: 1.5rem;
+            pointer-events: none;
+            z-index: -1;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes aurora {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.1;
+            }
+            90% {
+                opacity: 0.1;
+            }
+            100% {
+                transform: translate(var(--x), var(--y)) rotate(var(--rotate));
+                opacity: 0;
+            }
+        }
+
+        @keyframes wave {
+            0%, 100% {
+                transform: rotate(0deg);
+            }
+            25% {
+                transform: rotate(20deg);
+            }
+            75% {
+                transform: rotate(-15deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+                white-space: normal; /* Permitir saltos de línea en móvil si es necesario */
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .header-text {
+                order: 1;
+                width: 100%;
+                text-align: center;
+                margin-bottom: 1.5rem;
+            }
+            
+            .header-image {
+                order: 2;
+                margin: 0 auto 1.5rem;
+                text-align: center;
+            }
+            
+            .header-image img {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .header-description {
+                order: 3;
+                margin: 0 auto 1rem;
+            }
+            
+            .social-links {
+                justify-content: center;
+            }
+            
+            .experience-item, .education-item {
+                flex-direction: column;
+            }
+            
+            .experience-logo, .education-logo {
+                margin-bottom: 1rem;
+                margin-right: 0;
+            }
+            
+            .experience-date, .education-date {
+                text-align: left;
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Contenedor para las estrellas -->
+    <div class="stars-container" id="stars-container"></div>
+    
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <div class="header-text">
+                <h1>
+                    <span class="first-name">Hola, soy Álvaro <span class="last-name">Escartí</span></span> 
+                    <span class="emoji-wave" style="font-size: 2rem;">👋</span><br>
+                </h1>
+                <br>
+                <p class="header-description">
+                    Desarrollador Fullstack con experiencia en creación de aplicaciones web modernas. Me encanta construir soluciones y ayudar a las personas.
+                </p>
+                <div class="social-links">
+                    <a href="#" class="social-link" title="GitHub">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 0C5.37 0 0 5.37 0 12C0 17.31 3.435 21.795 8.205 23.385C8.805 23.49 9.03 23.13 9.03 22.815C9.03 22.53 9.015 21.585 9.015 20.58C6 21.135 5.22 19.845 4.98 19.17C4.845 18.825 4.26 17.76 3.75 17.475C3.33 17.25 2.73 16.695 3.735 16.68C4.68 16.665 5.355 17.55 5.58 17.91C6.66 19.725 8.385 19.215 9.075 18.9C9.18 18.12 9.495 17.595 9.84 17.295C7.17 16.995 4.38 15.96 4.38 11.37C4.38 10.065 4.845 8.985 5.61 8.145C5.49 7.845 5.07 6.615 5.73 4.965C5.73 4.965 6.735 4.65 9.03 6.195C9.99 5.925 11.01 5.79 12.03 5.79C13.05 5.79 14.07 5.925 15.03 6.195C17.325 4.635 18.33 4.965 18.33 4.965C18.99 6.615 18.57 7.845 18.45 8.145C19.215 8.985 19.68 10.05 19.68 11.37C19.68 15.975 16.875 16.995 14.205 17.295C14.64 17.67 15.015 18.39 15.015 19.515C15.015 21.12 15 22.41 15 22.815C15 23.13 15.225 23.505 15.825 23.385C18.2072 22.5807 20.2772 21.0497 21.7437 19.0074C23.2101 16.965 23.9993 14.5143 24 12C24 5.37 18.63 0 12 0Z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="social-link" title="LinkedIn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20.447 20.452H16.893V14.883C16.893 13.555 16.866 11.846 15.041 11.846C13.188 11.846 12.905 13.291 12.905 14.785V20.452H9.351V9H12.765V10.561H12.811C13.288 9.661 14.448 8.711 16.181 8.711C19.782 8.711 20.448 11.081 20.448 14.166V20.452H20.447ZM5.337 7.433C4.193 7.433 3.274 6.507 3.274 5.368C3.274 4.23 4.194 3.305 5.337 3.305C6.477 3.305 7.401 4.23 7.401 5.368C7.401 6.507 6.476 7.433 5.337 7.433ZM7.119 20.452H3.555V9H7.119V20.452Z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="social-link" title="Twitter">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="social-link" title="Email">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div class="header-image">
+                <br><br><br>
+                <img src="./1738882704091.jpg" alt="Álvaro Escartí" style="width: 200px; height: 200px;">
+            </div>
+        </div>
+
+        <!-- About Section -->
+        <h2 class="section-title">Sobre mí</h2>
+        <p class="about-text">
+            <span class="highlight">Técnico de Redes Informáticas en SATINFORLINGUA SL</span>, donde aplico mis conocimientos en:
+        </p>
+        <ul class="about-text" style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
+            <li>Programación en PHP</li>
+            <li>Shell Scripting</li>
+            <li>Interconexión de Redes</li>
+        </ul>
+        <p class="about-text">
+            Actualmente completando mi Ciclo Formativo de Grado Superior en Desarrollo de Aplicaciones Web en IES La Senia, complementando mi experiencia con certificaciones profesionales recientes.
+        </p>
+
+        <!-- Experience Section -->
+        <h2 class="section-title">Experiencia Laboral</h2>
+        
+        <!-- Experience Item 1 - SATINFORLINGUA -->
+        <div class="experience-item">
+            <div class="experience-logo">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z" fill="#FFD700"/>
+                </svg>
+            </div>
+            <div class="experience-details">
+                <div class="experience-title">SATINFORLINGUA SL</div>
+                <div class="experience-role">Técnico de redes informáticas · Jornada completa</div>
+                <div class="experience-description">
+                    <p>Desarrollo de aplicación policial para localizar vehículos tras la DANA:</p>
+                    <ul style="margin-top: 0.5rem; margin-left: 1rem; color: #a0a0a0;">
+                        <li>Extracción de datos de documentos Word con Python</li>
+                        <li>Backend con PHP y MySQL</li>
+                        <li>Frontend con HTML, CSS y JavaScript</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="experience-date">Nov. 2024 - actualidad<br>5 meses<br>Valencia</div>
+        </div>
+        
+        <!-- Experience Item 2 - Ayuntamiento -->
+        <div class="experience-item">
+            <div class="experience-logo">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7l2 1.5V20h16V8.5L22 7 12 2zm0 2.1l6 3.33v1.23H6V7.44L12 4.1zM6 18V12h12v6H6z" fill="#FFD700"/>
+                </svg>
+            </div>
+            <div class="experience-details">
+                <div class="experience-title">Ayuntamiento de Paiporta</div>
+                <div class="experience-role">Técnico de redes informáticas · Contrato de prácticas</div>
+                <div class="experience-description">
+                    <p style="margin-top: 0.5rem; color: #a0a0a0;">Servicios de redes, instalación de redes y otras aptitudes</p>
+                </div>
+            </div>
+            <div class="experience-date">Mar. 2023 - Jun. 2023<br>4 meses<br>Presencial</div>
+        </div>
+
+        <!-- Certificaciones y Cursos -->
+        <h2 class="section-title">Licencias y Certificaciones</h2>
+        
+        <!-- Certificación 1 - SQL -->
+        <div class="education-item">
+            <div class="education-logo">
+                <img src="udemy.png" alt="Udemy" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+            <div class="education-details">
+                <div class="education-title">SQL: Consultas básicas a complejas</div>
+                <div class="education-role">Udemy</div>
+                <div style="font-size: 0.85rem; color: #a0a0a0; margin-top: 0.25rem;">
+                    ID de la credencial UC-df34d4d6-860c-4e1a-982c-3aafea0f4f59
+                </div>
+                <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                    <span class="skill-tag" style="margin-right: 0.5rem;">MySQL</span>
+                </div>
+            </div>
+            <div class="education-date">Feb. 2025</div>
+        </div>
+        
+        <!-- Certificación 2 - React + Spring -->
+        <div class="education-item">
+            <div class="education-logo">
+                <img src="udemy.png" alt="Udemy" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+            <div class="education-details">
+                <div class="education-title">React + Spring Boot</div>
+                <div class="education-role">Udemy</div>
+                <div style="font-size: 0.85rem; color: #a0a0a0; margin-top: 0.25rem;">
+                    ID de la credencial UC-9db92941-0dff-4e2e-a28c-f839f862a3ad
+                </div>
+                <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                    <span class="skill-tag" style="margin-right: 0.5rem;">React</span>
+                    <span class="skill-tag" style="margin-right: 0.5rem;">Bootstrap</span>
+                    <span class="skill-tag">Spring Boot</span>
+                </div>
+            </div>
+            <div class="education-date">Feb. 2025</div>
+        </div>
+        
+        <!-- Certificación 3 - Bash -->
+        <div class="education-item">
+            <div class="education-logo">
+                <img src="./openwebinars.jpg" alt="OpenWebinars" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+            <div class="education-details">
+                <div class="education-title">Curso de bash scripting y automatización de procesos</div>
+                <div class="education-role">OpenWebinars</div>
+                <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                    <span class="skill-tag" style="margin-right: 0.5rem;">Bash</span>
+                    <span class="skill-tag">Shell</span>
+                </div>
+            </div>
+            <div class="education-date">Ene. 2025</div>
+        </div>
+        
+        <!-- Certificación 4 - HTML5 y CSS3 -->
+        <div class="education-item">
+            <div class="education-logo">
+                <img src="./openwebinars.jpg" alt="OpenWebinars" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+            <div class="education-details">
+                <div class="education-title">Curso de HTML5 y CSS3</div>
+                <div class="education-role">OpenWebinars</div>
+                <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                    <span class="skill-tag" style="margin-right: 0.5rem;">HTML5</span>
+                    <span class="skill-tag" style="margin-right: 0.5rem;">CSS</span>
+                    <span class="skill-tag">Desarrollo web</span>
+                </div>
+            </div>
+            <div class="education-date">Oct. 2024</div>
+        </div>
+        
+        <!-- Certificación 5 - JavaScript -->
+        <div class="education-item">
+            <div class="education-logo">
+                <img src="./openwebinars.jpg" alt="OpenWebinars" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+            <div class="education-details">
+                <div class="education-title">Fundamentos de JavaScript</div>
+                <div class="education-role">OpenWebinars</div>
+                <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                    <span class="skill-tag" style="margin-right: 0.5rem;">JavaScript</span>
+                    <span class="skill-tag" style="margin-right: 0.5rem;">Desarrollo web</span>
+                    <span class="skill-tag">POO</span>
+                </div>
+            </div>
+            <div class="education-date">Oct. 2024</div>
+        </div>
+        
+        <!-- Education Section -->
+        <h2 class="section-title">Educación</h2>
+        
+        <!-- Education Item 1 - IES La Senia (Grado Superior) -->
+        <div class="education-item">
+            <div class="education-logo">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z" fill="#FFD700"/>
+                </svg>
+            </div>
+            <div class="education-details">
+                <div class="education-title">IES La Senia</div>
+                <div class="education-role">Ciclo Formativo de Grado Superior, Desarrollo de aplicaciones web</div>
+                <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                    <span class="skill-tag" style="margin-right: 0.5rem;">Desarrollo web</span>
+                    <span class="skill-tag" style="margin-right: 0.5rem;">Presentaciones</span>
+                    <span class="skill-tag">Aplicaciones web</span>
+                </div>
+            </div>
+            <div class="education-date">Sept. 2023 - Mar. 2025</div>
+        </div>
+        
+        <!-- Education Item 2 - IES La Senia (Grado Medio) -->
+        <div class="education-item">
+            <div class="education-logo">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z" fill="#FFD700"/>
+                </svg>
+            </div>
+            <div class="education-details">
+                <div class="education-title">IES La Senia</div>
+                <div class="education-role">Ciclo Formativo de Grado Medio, Sistemas Microinformáticos y Redes</div>
+                <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                    <span class="skill-tag" style="margin-right: 0.5rem;">GitLab</span>
+                    <span class="skill-tag">Bash</span>
+                </div>
+            </div>
+            <div class="education-date">Sept. 2021 - Jun. 2023</div>
+        </div>
+        
+        <!-- Skills Section -->
+        <h2 class="section-title">Habilidades técnicas</h2>
+        <div class="skills-container">
+            <span class="skill-tag">HTML5</span>
+            <span class="skill-tag">CSS3</span>
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">PHP</span>
+            <span class="skill-tag">MySQL</span>
+            <span class="skill-tag">React</span>
+            <span class="skill-tag">Spring Boot</span>
+            <span class="skill-tag">Bash</span>
+            <span class="skill-tag">Shell</span>
+            <span class="skill-tag">Bootstrap</span>
+            <span class="skill-tag">Redes</span>
+            <span class="skill-tag">Hardware</span>
+            <span class="skill-tag">POO</span>
+            <span class="skill-tag">Git</span>
+            <span class="skill-tag">GitLab</span>
+            <span class="skill-tag">Automatización</span>
+            <span class="skill-tag">Ciberseguridad</span>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>&copy; 2025 Álvaro Escartí. Todos los derechos reservados.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Crear el cielo estrellado
+        function createStars() {
+            const starsContainer = document.getElementById('stars-container');
+            const containerWidth = window.innerWidth;
+            const containerHeight = window.innerHeight;
+            
+            // Crear estrellas normales
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Tamaño aleatorio para las estrellas
+                const size = Math.random() * 2;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Posición aleatoria
+                const posX = Math.random() * containerWidth;
+                const posY = Math.random() * containerHeight;
+                star.style.left = `${posX}px`;
+                star.style.top = `${posY}px`;
+                
+                // Algunas estrellas tendrán efecto de brillo
+                if (Math.random() > 0.7) {
+                    star.classList.add('shine');
+                } else if (Math.random() > 0.85) {
+                    star.classList.add('shine-fast');
+                }
+                
+                starsContainer.appendChild(star);
+            }
+            
+            // Crear estrellas fugaces
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    createShootingStar();
+                }, i * 7000); // Crear una estrella fugaz cada 7 segundos
+            }
+        }
+        
+        function createShootingStar() {
+            const starsContainer = document.getElementById('stars-container');
+            const containerWidth = window.innerWidth;
+            const containerHeight = window.innerHeight;
+            
+            const star = document.createElement('div');
+            star.classList.add('star', 'shooting');
+            
+            // Posición inicial aleatoria en la parte superior
+            const posX = Math.random() * containerWidth * 0.8;
+            const posY = Math.random() * containerHeight * 0.3;
+            star.style.left = `${posX}px`;
+            star.style.top = `${posY}px`;
+            
+            // Distancia que viajará la estrella fugaz
+            const travelDistance = Math.random() * 300 + 200;
+            star.style.setProperty('--travel-distance', `${travelDistance}px`);
+            
+            starsContainer.appendChild(star);
+            
+            // Eliminar la estrella fugaz después de la animación
+            setTimeout(() => {
+                star.remove();
+                // Crear una nueva estrella fugaz
+                createShootingStar();
+            }, 5000);
+        }
+        
+        // Inicializar el cielo estrellado
+        window.addEventListener('load', createStars);
+        
+        // Create floating code elements
+        const codeElements = [
+            '<div>', '</div>', '</>',
+            'function()', '{}', '()',
+            '=>', 'const', 'let',
+            '<if>', '</if>', '||',
+            '&&', 'for()', 'while()',
+            'import', 'export', 'return',
+            'async', 'await', '[]',
+            'class', 'this', 'new',
+            'try{}', 'catch()', '.then()'
+        ];
+
+        function createCodeElement() {
+            const element = document.createElement('div');
+            element.classList.add('code-element');
+            
+            // Random code text
+            const randomCode = codeElements[Math.floor(Math.random() * codeElements.length)];
+            element.textContent = randomCode;
+            
+            // Random position
+            const startX = Math.random() * window.innerWidth;
+            const startY = Math.random() * window.innerHeight;
+            
+            // Random movement
+            const moveX = Math.random() * window.innerWidth - startX;
+            const moveY = Math.random() * window.innerHeight - startY;
+            
+            // Random rotation
+            const rotation = Math.random() * 360;
+            
+            // Random size
+            const size = Math.floor(Math.random() * 30) + 15;
+            element.style.fontSize = size + 'px';
+            
+            // Set custom properties for animation
+            element.style.setProperty('--x', moveX + 'px');
+            element.style.setProperty('--y', moveY + 'px');
+            element.style.setProperty('--rotate', rotation + 'deg');
+            
+            // Position the element
+            element.style.left = startX + 'px';
+            element.style.top = startY + 'px';
+            
+            // Add to body
+            document.body.appendChild(element);
+            
+            // Remove after animation
+            setTimeout(() => {
+                element.remove();
+                // Create a new one
+                if (document.visibilityState === 'visible') {
+                    createCodeElement();
+                }
+            }, 20000);
+        }
+        
+        // Create initial code elements
+        for (let i = 0; i < 15; i++) {
+            setTimeout(() => {
+                createCodeElement();
+            }, i * 1000);
+        }
+    </script>
+</body>
+</html>
